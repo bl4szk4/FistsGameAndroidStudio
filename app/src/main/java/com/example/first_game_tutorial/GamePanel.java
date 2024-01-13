@@ -20,24 +20,41 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder holder;
     private ArrayList<RndSqare> sqares = new ArrayList<>();
     private Random random = new Random();
+    private GameLoop gameLoop;
+
 
     public GamePanel(Context context) {
         super(context);
         holder = getHolder();
         holder.addCallback(this);
         redPaint.setColor(Color.RED);
+        gameLoop = new GameLoop(this);
     }
 
-    private void render(){
+
+    public void render(){
         Canvas c = holder.lockCanvas();
         c.drawColor(Color.BLACK);
 
-        for(RndSqare square: sqares){
-            square.draw(c);
+        synchronized (sqares){
+            for(RndSqare square: sqares){
+                square.draw(c);
 
+            }
         }
 
+
         holder.unlockCanvasAndPost(c);
+    }
+    public void update(double delta){
+
+        synchronized (sqares){
+            for(RndSqare square: sqares){
+
+                square.move(delta);
+
+            }
+        }
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -45,16 +62,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             PointF pos = new PointF(event.getX(), event.getY());
             int color = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
             int size = 25 + random.nextInt(100);
-            sqares.add(new RndSqare(pos, color, size));
-            render();
 
+            synchronized (sqares){
+
+                sqares.add(new RndSqare(pos, color, size));
+            }
+//            render();
+//            update();
         }
         return true;
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        render();
+        gameLoop.startGameLoop();
     }
 
     @Override
@@ -71,6 +92,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         private PointF p;
         private int size;
         private Paint paint;
+        private int xDir = 1, yDir = 1;
         public RndSqare(PointF p, int color, int size){
             this.p = p;
             this.size = size;
@@ -79,6 +101,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
         public void draw(Canvas c){
             c.drawRect(p.x, p.y, p.x + size, p.y + size, paint);
+        }
+        public void move(double delta){
+            p.x += xDir * delta * 300;
+            p.y += yDir * delta * 300;
+            if(p.x + size >= 1080 || p.x <= 0)
+                xDir *= -1;
+            if(p.y + size >= 1920 || p.y <= 0)
+                yDir *= -1;
         }
     }
 }
