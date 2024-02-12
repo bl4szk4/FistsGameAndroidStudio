@@ -1,5 +1,8 @@
 package com.example.first_game_tutorial;
 
+import static com.example.first_game_tutorial.MainActivity.GAME_HEIGHT;
+import static com.example.first_game_tutorial.MainActivity.GAME_WIDTH;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -43,7 +46,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         redPaint.setColor(Color.RED);
         gameLoop = new GameLoop(this);
         touchEvents = new TouchEvents(this);
-        skeletonPos =  new PointF(random.nextInt(1080), random.nextInt(1920));
+        skeletonPos =  new PointF(random.nextInt(GAME_WIDTH), random.nextInt(GAME_HEIGHT));
 //        for (int i = 0; i < 10; i++)
 //            skeletons.add(new PointF(random.nextInt(1080), random.nextInt(1920)));
     }
@@ -65,7 +68,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         switch (skeletonDir){
             case GameConstants.Face_Dir.DOWN:
                 skeletonPos.y += delta * 300;
-                if(skeletonPos.y >= 1920)
+                if(skeletonPos.y >= GAME_HEIGHT)
                     skeletonDir = GameConstants.Face_Dir.UP;
                 break;
             case GameConstants.Face_Dir.UP:
@@ -80,7 +83,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 break;
             case GameConstants.Face_Dir.RIGHT:
                 skeletonPos.x += delta * 300;
-                if(skeletonPos.x >= 1080)
+                if(skeletonPos.x >= GAME_WIDTH)
                     skeletonDir = GameConstants.Face_Dir.LEFT;
                 break;
         }
