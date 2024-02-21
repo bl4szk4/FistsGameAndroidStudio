@@ -15,12 +15,10 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.example.first_game_tutorial.entities.GameCharacters;
-import com.example.first_game_tutorial.environments.GameMap;
+import com.example.first_game_tutorial.environments.MapManager;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.inputs.TouchEvents;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
@@ -30,7 +28,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Random random = new Random();
     private GameLoop gameLoop;
     private TouchEvents touchEvents;
-    private float x, y;
+    private float playerX = GAME_WIDTH / 2, playerY = GAME_HEIGHT / 2;
+    private float cameraX, cameraY;
     private boolean movePlayer;
     private PointF lastTouchDiff;
 //    private ArrayList<PointF> skeletons = new ArrayList<>();
@@ -42,7 +41,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private int aniSpeed = 10;
     private long lastDirChange = System.currentTimeMillis();
     //Testing Map
-    private GameMap testMap;
+    private MapManager mapManager;
     public GamePanel(Context context) {
         super(context);
         holder = getHolder();
@@ -51,22 +50,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop = new GameLoop(this);
         touchEvents = new TouchEvents(this);
         skeletonPos =  new PointF(random.nextInt(GAME_WIDTH), random.nextInt(GAME_HEIGHT));
-        int[][] spritesIds = {
-                {454, 276, 275, 275, 190, 275, 275, 279, 275, 275, 275, 297, 110, 8, 1, 1, 1, 2, 110, 132},
-                {454, 275, 169, 232, 238, 275, 275, 275, 276, 275, 275, 297, 110, 22, 89, 23, 23, 24, 110, 132},
-                {454, 275, 190, 276, 275, 275, 279, 275, 275, 275, 279, 297, 110, 22, 23, 23, 23, 24, 110, 132},
-                {454, 275, 190, 279, 275, 275, 169, 233, 275, 275, 275, 297, 110, 22, 23, 23, 23, 24, 110, 132},
-                {454, 275, 190, 276, 277, 275, 190, 279, 279, 279, 275, 297, 110, 22, 23, 88, 23, 24, 110, 132},
-                {454, 275, 235, 232, 232, 232, 260, 279, 276, 279, 275, 297, 110, 22, 23, 89, 23, 24, 110, 132},
-                {454, 275, 275, 275, 275, 275, 190, 279, 279, 279, 275, 297, 110, 22, 23, 23, 23, 24, 110, 132},
-                {454, 277, 275, 275, 279, 275, 257, 232, 232, 232, 238, 297, 110, 22, 88, 23, 23, 24, 110, 132},
-                {454, 275, 275, 275, 275, 275, 190, 279, 275, 275, 275, 297, 110, 22, 23, 23, 88, 24, 110, 132},
-                {454, 275, 275, 275, 275, 275, 190, 279, 279, 279, 279, 297, 110, 22, 23, 23, 23, 24, 110, 132},
-                {454, 169, 232, 232, 232, 232, 239, 232, 232, 232, 172, 297, 110, 22, 23, 89, 23, 24, 110, 132},
-                {454, 190, 279, 275, 275, 275, 275, 275, 275, 275, 198, 297, 110, 44, 45, 45, 45, 46, 110, 132}
-        };
-
-        testMap = new GameMap(spritesIds);
+        mapManager = new MapManager();
 
     }
 
@@ -74,13 +58,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void render(){
         Canvas c = holder.lockCanvas();
         c.drawColor(Color.BLACK);
-        testMap.draw(c);
-        c.drawBitmap(GameCharacters.PLAYER.getSprite(playerAniIndexY, playerFaceDir), x, y, null);
-        c.drawBitmap(GameCharacters.SKELETON.getSprite(playerAniIndexY, skeletonDir), skeletonPos.x, skeletonPos.y, null);
+        mapManager.draw(c);
+        c.drawBitmap(GameCharacters.PLAYER.getSprite(playerAniIndexY, playerFaceDir), playerX, playerY, null);
+        c.drawBitmap(GameCharacters.SKELETON.getSprite(playerAniIndexY, skeletonDir), skeletonPos.x + cameraX, skeletonPos.y + cameraY, null);
         touchEvents.draw(c);
         holder.unlockCanvasAndPost(c);
     }
     public void update(double delta){
+        updatePlayerMove(delta);
+        mapManager.setCameraValues(cameraX, cameraY);
+
+
         if(System.currentTimeMillis() - lastDirChange >= 5000){
             lastDirChange = System.currentTimeMillis();
             skeletonDir = random.nextInt(4);
@@ -108,11 +96,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 break;
         }
 
-        updatePlayerMove(delta);
         updateAnimation();
     }
 
     private void updatePlayerMove(double delta) {
+
         if(!movePlayer)
             return;
 
@@ -137,8 +125,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             xSpeed *= -1;
         if(lastTouchDiff.y < 0)
             ySpeed *= -1;
-        x += xSpeed * baseSpeed;
-        y += ySpeed * baseSpeed;
+
+        int pWidth = GameConstants.Sprite.SIZE;
+        int pHeight = GameConstants.Sprite.SIZE;
+
+        if(xSpeed <= 0)
+            pWidth = 0;
+        if(ySpeed <= 0)
+            pHeight = 0;
+
+        float deltaX = xSpeed * baseSpeed * -1;
+        float deltaY = ySpeed * baseSpeed * -1;
+        if(mapManager.canMoveHere(playerX + cameraX * -1 + deltaX * -1 + pWidth, playerY + cameraY * -1 + deltaY * -1 + pHeight)){
+            cameraX += deltaX;
+            cameraY += deltaY;
+        }
+
+
 
     }
 
