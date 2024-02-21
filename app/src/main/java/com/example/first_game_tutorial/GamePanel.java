@@ -15,10 +15,12 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.example.first_game_tutorial.entities.GameCharacters;
+import com.example.first_game_tutorial.environments.GameMap;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.inputs.TouchEvents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
@@ -39,6 +41,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private int aniTick;
     private int aniSpeed = 10;
     private long lastDirChange = System.currentTimeMillis();
+    //Testing Map
+    private GameMap testMap;
     public GamePanel(Context context) {
         super(context);
         holder = getHolder();
@@ -47,14 +51,30 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         gameLoop = new GameLoop(this);
         touchEvents = new TouchEvents(this);
         skeletonPos =  new PointF(random.nextInt(GAME_WIDTH), random.nextInt(GAME_HEIGHT));
-//        for (int i = 0; i < 10; i++)
-//            skeletons.add(new PointF(random.nextInt(1080), random.nextInt(1920)));
+        int[][] spritesIds = {
+                {454, 276, 275, 275, 190, 275, 275, 279, 275, 275, 275, 297, 110, 8, 1, 1, 1, 2, 110, 132},
+                {454, 275, 169, 232, 238, 275, 275, 275, 276, 275, 275, 297, 110, 22, 89, 23, 23, 24, 110, 132},
+                {454, 275, 190, 276, 275, 275, 279, 275, 275, 275, 279, 297, 110, 22, 23, 23, 23, 24, 110, 132},
+                {454, 275, 190, 279, 275, 275, 169, 233, 275, 275, 275, 297, 110, 22, 23, 23, 23, 24, 110, 132},
+                {454, 275, 190, 276, 277, 275, 190, 279, 279, 279, 275, 297, 110, 22, 23, 88, 23, 24, 110, 132},
+                {454, 275, 235, 232, 232, 232, 260, 279, 276, 279, 275, 297, 110, 22, 23, 89, 23, 24, 110, 132},
+                {454, 275, 275, 275, 275, 275, 190, 279, 279, 279, 275, 297, 110, 22, 23, 23, 23, 24, 110, 132},
+                {454, 277, 275, 275, 279, 275, 257, 232, 232, 232, 238, 297, 110, 22, 88, 23, 23, 24, 110, 132},
+                {454, 275, 275, 275, 275, 275, 190, 279, 275, 275, 275, 297, 110, 22, 23, 23, 88, 24, 110, 132},
+                {454, 275, 275, 275, 275, 275, 190, 279, 279, 279, 279, 297, 110, 22, 23, 23, 23, 24, 110, 132},
+                {454, 169, 232, 232, 232, 232, 239, 232, 232, 232, 172, 297, 110, 22, 23, 89, 23, 24, 110, 132},
+                {454, 190, 279, 275, 275, 275, 275, 275, 275, 275, 198, 297, 110, 44, 45, 45, 45, 46, 110, 132}
+        };
+
+        testMap = new GameMap(spritesIds);
+
     }
 
 
     public void render(){
         Canvas c = holder.lockCanvas();
         c.drawColor(Color.BLACK);
+        testMap.draw(c);
         c.drawBitmap(GameCharacters.PLAYER.getSprite(playerAniIndexY, playerFaceDir), x, y, null);
         c.drawBitmap(GameCharacters.SKELETON.getSprite(playerAniIndexY, skeletonDir), skeletonPos.x, skeletonPos.y, null);
         touchEvents.draw(c);
