@@ -3,7 +3,7 @@ package com.example.first_game_tutorial.entities;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.example.first_game_tutorial.MainActivity;
+import com.example.first_game_tutorial.main.MainActivity;
 import com.example.first_game_tutorial.R;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.interfaces.BitmapMethods;

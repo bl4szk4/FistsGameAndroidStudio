@@ -2,7 +2,7 @@ package com.example.first_game_tutorial.entities;
 
 import android.graphics.PointF;
 
-import com.example.first_game_tutorial.MainActivity;
+import com.example.first_game_tutorial.main.MainActivity;
 
 public class Player extends Character{
     public Player() {
