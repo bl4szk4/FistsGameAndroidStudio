@@ -13,7 +13,11 @@ import com.example.first_game_tutorial.environments.MapManager;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.interfaces.GameStateInterface;
 import com.example.first_game_tutorial.main.Game;
+import com.example.first_game_tutorial.ui.ButtonImages;
+import com.example.first_game_tutorial.ui.CustomButton;
+import com.example.first_game_tutorial.ui.PlayingUI;
 
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class Playing extends BaseState implements GameStateInterface {
@@ -24,19 +28,12 @@ public class Playing extends BaseState implements GameStateInterface {
     private ArrayList<Skeleton> skeletons;
     private MapManager mapManager;
 
-    //For UI
-    private float xCenter = 250, yCenter = 700, radius = 150;
-    private Paint circlePaint;
-    private float xTouch, yTouch;
-    private boolean touchDown;
+    private PlayingUI playingUI;
 
 
     public Playing(Game game) {
         super(game);
-        circlePaint = new Paint();
-        circlePaint.setColor(Color.RED);
-        circlePaint.setStrokeWidth(5);
-        circlePaint.setStyle(Paint.Style.STROKE);
+
         player = new Player();
         skeletons = new ArrayList<>();
         mapManager = new MapManager();
@@ -44,6 +41,8 @@ public class Playing extends BaseState implements GameStateInterface {
         for(int i = 0; i < 50; i++){
             skeletons.add(new Skeleton(new PointF(100,100)));
         }
+        playingUI = new PlayingUI(this);
+
     }
 
     @Override
@@ -58,54 +57,18 @@ public class Playing extends BaseState implements GameStateInterface {
     @Override
     public void render(Canvas c) {
         mapManager.draw(c);
-        drawUI(c);
 
         drawPlayer(c);
         for(Skeleton skeleton: skeletons)
             drawCharacter(c, skeleton);
+        playingUI.draw(c);
     }
 
-    private void drawUI(Canvas c) {
-        c.drawCircle(xCenter, yCenter, radius, circlePaint);
 
-    }
 
     @Override
     public void touchEvents(MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                float x = event.getX();
-                float y = event.getY();
-
-                float a = Math.abs(x - xCenter);
-                float b = Math.abs(y - yCenter);
-                float c = (float)Math.hypot(a, b);
-
-                if(c<= radius){
-                    touchDown = true;
-                    xTouch = x;
-                    yTouch = y;
-                }
-                else{
-                    game.setCurrentGameState(Game.GameState.MENU);
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if(touchDown){
-                    xTouch = event.getX();
-                    yTouch = event.getY();
-
-                    float xDiff = xTouch - xCenter;
-                    float yDiff = yTouch - yCenter;
-
-                    setPlayerMoveTrue(new PointF(xDiff, yDiff));
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                touchDown = false;
-                setPlayerMoveFalse();
-                break;
-        }
+        playingUI.touchEvents(event);
     }
 
     private void drawPlayer(Canvas c) {
@@ -122,6 +85,11 @@ public class Playing extends BaseState implements GameStateInterface {
                 character.getHitbox().left + cameraX,
                 character.getHitbox().top + cameraY,
                 null);
+    }
+
+    public void setGameStateToMenu(){
+        game.setCurrentGameState(Game.GameState.MENU);
+
     }
 
     private void updatePlayerMove(double delta) {
@@ -175,5 +143,6 @@ public class Playing extends BaseState implements GameStateInterface {
             movePlayer = false;
             player.resetAnimation();
         }
+
     }
 
