@@ -12,8 +12,10 @@ import com.example.first_game_tutorial.main.Game;
 public class PlayingUI {
     private final Playing playing;
     //For UI
-    private float xCenter = 250, yCenter = 700, radius = 150;
-    private Paint circlePaint;
+    private final PointF joystickCenterPos = new PointF(250, 800);
+    private final PointF attackBtnCenterPos = new PointF(1700, 800);
+    private final float radius = 150;
+    private final Paint circlePaint;
     private CustomButton btnMenu;
 
     // For multitouch
@@ -29,9 +31,10 @@ public class PlayingUI {
         btnMenu = new CustomButton(5, 5, ButtonImages.PLAYING_MENU.getWidth(), ButtonImages.PLAYING_MENU.getHeight());
     }
     private void drawUI(Canvas c) {
-        c.drawCircle(xCenter, yCenter, radius, circlePaint);
+        c.drawCircle(joystickCenterPos.x, joystickCenterPos.y, radius, circlePaint);
+        c.drawCircle(attackBtnCenterPos.x, attackBtnCenterPos.y, radius, circlePaint);
         c.drawBitmap(
-                ButtonImages.PLAYING_MENU.getBtnImg(btnMenu.isPushed()),
+                ButtonImages.PLAYING_MENU.getBtnImg(btnMenu.isPushed(btnMenu.getPointerId())),
                 btnMenu.getHitbox().left,
                 btnMenu.getHitbox().top,
                 null
@@ -44,16 +47,30 @@ public class PlayingUI {
     }
 
     private boolean checkInsideJoystick(PointF eventPos, int pointerId){
-        float a = Math.abs(eventPos.x - xCenter);
-        float b = Math.abs(eventPos.y - yCenter);
-        float c = (float)Math.hypot(a, b);
 
-        if(c<= radius){
+        if(isInsideRadius(eventPos, joystickCenterPos)){
             touchDown = true;
             joystickPointerId = pointerId;
             return true;
         }
         return false;
+    }
+
+    private boolean isInsideRadius(PointF eventPos, PointF circle){
+        float a = Math.abs(eventPos.x - circle.x);
+        float b = Math.abs(eventPos.y - circle.y);
+        float c = (float)Math.hypot(a, b);
+
+        return c <= radius;
+
+    }
+
+    private boolean checkInsideAttackBtn(PointF eventPos){
+        return isInsideRadius(eventPos, attackBtnCenterPos);
+    }
+
+    private void spawnSkeletons(){
+        playing.spawnSkeleton();
     }
 
     public void touchEvents(MotionEvent event){
@@ -68,10 +85,11 @@ public class PlayingUI {
                 if(checkInsideJoystick(eventPos, pointerId)){
                     touchDown = true;
 
-                }
-                else{
-                    if(isIn(event, btnMenu))
-                        btnMenu.setPushed(true);
+                } else if (checkInsideAttackBtn(eventPos)) {
+                    spawnSkeletons();
+                } else{
+                    if(isIn(eventPos, btnMenu))
+                        btnMenu.setPushed(true, pointerId);
 
                 }
             }
@@ -79,8 +97,8 @@ public class PlayingUI {
                 if(touchDown)
                     for(int i = 0; i < event.getPointerCount(); i++){
                         if (event.getPointerId(i) == joystickPointerId){
-                            float xDiff = event.getX(i) - xCenter;
-                            float yDiff = event.getY(i) - yCenter;
+                            float xDiff = event.getX(i) - joystickCenterPos.x;
+                            float yDiff = event.getY(i) - joystickCenterPos.y;
                             playing.setPlayerMoveTrue(new PointF(xDiff, yDiff));
                         }
                     }
@@ -91,13 +109,13 @@ public class PlayingUI {
                     resetJoystickButton();
                 }
                 else{
-                    if(isIn(event, btnMenu)) {
-                        if (btnMenu.isPushed()) {
+                    if(isIn(eventPos, btnMenu)) {
+                        if (btnMenu.isPushed(pointerId)) {
                             resetJoystickButton();
                             playing.setGameStateToMenu();
                         }
                     }
-                    btnMenu.setPushed(false);
+                    btnMenu.unPush(pointerId);
 
                 }
 
@@ -105,8 +123,8 @@ public class PlayingUI {
 
         }
     }
-    private boolean isIn(MotionEvent e, CustomButton b){
-        return b.getHitbox().contains(e.getX(), e.getY());
+    private boolean isIn(PointF eventPos, CustomButton b){
+        return b.getHitbox().contains(eventPos.x, eventPos.y);
     }
     private void resetJoystickButton(){
         touchDown = false;
