@@ -1,6 +1,7 @@
 package com.example.first_game_tutorial.entities;
 
-import static com.example.first_game_tutorial.helpers.GameConstants.Sprite.SIZE;
+import static com.example.first_game_tutorial.helpers.GameConstants.Sprite.HITBOX_SIZE;
+
 
 import android.graphics.PointF;
 
@@ -11,7 +12,7 @@ public abstract class Character extends Entity{
     protected int faceDir = GameConstants.Face_Dir.DOWN;
     protected final GameCharacters gameCharType;
     public Character(PointF pos, GameCharacters gameCharType) {
-        super(pos, SIZE, SIZE);
+        super(pos, HITBOX_SIZE, HITBOX_SIZE);
         this.gameCharType = gameCharType;
     }
     protected void updateAnimation(){

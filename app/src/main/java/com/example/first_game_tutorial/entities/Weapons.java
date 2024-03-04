@@ -8,8 +8,9 @@ import com.example.first_game_tutorial.helpers.interfaces.BitmapMethods;
 import com.example.first_game_tutorial.main.MainActivity;
 
 public enum Weapons implements BitmapMethods {
-    BIG_SWORD(R.drawable.big_sword);
-    Bitmap weaponImage;
+    BIG_SWORD(R.drawable.big_sword),
+    SHADOW(R.drawable.shadow);
+    final Bitmap weaponImage;
 
     Weapons(int resID) {
         options.inScaled = false;
