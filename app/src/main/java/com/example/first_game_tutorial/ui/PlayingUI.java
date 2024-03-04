@@ -21,6 +21,7 @@ public class PlayingUI {
     // For multitouch
     private boolean touchDown;
     private int joystickPointerId = -1;
+    private int attackBtnPointerId = -1;
 
     public PlayingUI(Playing playing) {
         this.playing = playing;
@@ -86,7 +87,10 @@ public class PlayingUI {
                     touchDown = true;
 
                 } else if (checkInsideAttackBtn(eventPos)) {
-                    spawnSkeletons();
+                    if (attackBtnPointerId < 0){
+                        playing.setAttacking(true);
+                        attackBtnPointerId = pointerId;
+                    }
                 } else{
                     if(isIn(eventPos, btnMenu))
                         btnMenu.setPushed(true, pointerId);
@@ -114,9 +118,13 @@ public class PlayingUI {
                             resetJoystickButton();
                             playing.setGameStateToMenu();
                         }
+
                     }
                     btnMenu.unPush(pointerId);
-
+                    if (pointerId == attackBtnPointerId) {
+                        playing.setAttacking(false);
+                        attackBtnPointerId = -1;
+                    }
                 }
 
             }

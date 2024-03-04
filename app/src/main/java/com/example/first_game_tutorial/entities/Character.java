@@ -1,5 +1,7 @@
 package com.example.first_game_tutorial.entities;
 
+import static com.example.first_game_tutorial.helpers.GameConstants.Sprite.SIZE;
+
 import android.graphics.PointF;
 
 import com.example.first_game_tutorial.helpers.GameConstants;
@@ -9,7 +11,7 @@ public abstract class Character extends Entity{
     protected int faceDir = GameConstants.Face_Dir.DOWN;
     protected final GameCharacters gameCharType;
     public Character(PointF pos, GameCharacters gameCharType) {
-        super(pos, 1, 1);
+        super(pos, SIZE, SIZE);
         this.gameCharType = gameCharType;
     }
     protected void updateAnimation(){
