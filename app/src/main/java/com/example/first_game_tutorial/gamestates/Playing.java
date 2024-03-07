@@ -1,5 +1,8 @@
 package com.example.first_game_tutorial.gamestates;
 
+import static com.example.first_game_tutorial.main.MainActivity.GAME_HEIGHT;
+import static com.example.first_game_tutorial.main.MainActivity.GAME_WIDTH;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,6 +10,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
+import com.example.first_game_tutorial.entities.BuildingManager;
 import com.example.first_game_tutorial.entities.Character;
 import com.example.first_game_tutorial.entities.Player;
 import com.example.first_game_tutorial.entities.Weapons;
@@ -26,7 +30,7 @@ public class Playing extends BaseState implements GameStateInterface {
     private Player player;
     private ArrayList<Skeleton> skeletons;
     private MapManager mapManager;
-
+//    private BuildingManager buildingManager;
     private PlayingUI playingUI;
     private final Paint redPaint;
     private RectF attackBox = null;
@@ -39,6 +43,8 @@ public class Playing extends BaseState implements GameStateInterface {
         player = new Player();
         skeletons = new ArrayList<>();
         mapManager = new MapManager();
+        calcStartCamVal();
+
 
         redPaint = new Paint();
         redPaint.setStrokeWidth(1);
@@ -53,6 +59,12 @@ public class Playing extends BaseState implements GameStateInterface {
 
         udpateWepHitbox();
 
+//        buildingManager = new BuildingManager();
+    }
+
+    private void calcStartCamVal() {
+        cameraY = GAME_HEIGHT / 2 - mapManager.getMaxHeightCurrentMap() / 2;
+        cameraX = GAME_WIDTH / 2 - mapManager.getMaxWidthCurrentMap() / 2;
     }
 
     public void spawnSkeleton(){
@@ -73,6 +85,8 @@ public class Playing extends BaseState implements GameStateInterface {
 
         for(Skeleton skeleton: skeletons)
             if (skeleton.isActive()) skeleton.update(delta);
+
+//        buildingManager.setCameraValues(cameraX, cameraY);
 
     }
 
@@ -145,6 +159,7 @@ public class Playing extends BaseState implements GameStateInterface {
     @Override
     public void render(Canvas c) {
         mapManager.draw(c);
+//        buildingManager.draw(c);
 
         drawPlayer(c);
 
@@ -260,8 +275,8 @@ public class Playing extends BaseState implements GameStateInterface {
         if (lastTouchDiff.y < 0)
             ySpeed *= -1;
 
-        int pWidth = GameConstants.Sprite.SIZE;
-        int pHeight = GameConstants.Sprite.SIZE;
+        int pWidth = (int)player.getHitbox().width();
+        int pHeight = (int)player.getHitbox().height();
 
         if (xSpeed <= 0)
             pWidth = 0;
