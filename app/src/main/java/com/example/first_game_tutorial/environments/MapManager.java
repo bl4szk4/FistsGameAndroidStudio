@@ -2,10 +2,12 @@ package com.example.first_game_tutorial.environments;
 
 import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.graphics.RectF;
 
 import com.example.first_game_tutorial.entities.Building;
 import com.example.first_game_tutorial.entities.Buildings;
 import com.example.first_game_tutorial.helpers.GameConstants;
+import com.example.first_game_tutorial.helpers.HelpMethods;
 
 import java.util.ArrayList;
 
@@ -51,6 +53,18 @@ public class MapManager {
     public int getMaxHeightCurrentMap(){
         return currentMap.getArrayHeight() * GameConstants.Sprite.SIZE;
     }
+
+    public Doorway isPlayerOnDoorway(RectF playerHitbox){
+        for(Doorway doorway: currentMap.getDoorwayArrayList()){
+            if(doorway.isPlayerInsideDoorway(playerHitbox, cameraX, cameraY)){
+                return doorway;}
+        }
+        return null;
+    }
+
+    public void changeMap(GameMap gameMap){
+        this.currentMap = gameMap;
+    }
     private void initTestMap() {
         int[][] outsideArr = {
                 {454, 276, 275, 275, 190, 275, 275, 279, 275, 275, 275, 297, 110, 8, 1, 1, 1, 2, 110, 132},
@@ -90,7 +104,9 @@ public class MapManager {
 
         insideMap = new GameMap(insideArr, Floor.INSIDE, null);
         outsideMap = new GameMap(outsideArr, Floor.OUTSIDE, buildingArrayList);
-        currentMap = insideMap;
+        HelpMethods.AddDoorwayToGameMa(outsideMap, insideMap, 0);
+        currentMap = outsideMap;
+
     }
     public void setCameraValues(float cameraX, float cameraY){
         this.cameraX = cameraX;

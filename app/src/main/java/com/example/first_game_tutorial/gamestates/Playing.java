@@ -15,6 +15,7 @@ import com.example.first_game_tutorial.entities.Character;
 import com.example.first_game_tutorial.entities.Player;
 import com.example.first_game_tutorial.entities.Weapons;
 import com.example.first_game_tutorial.entities.enemies.Skeleton;
+import com.example.first_game_tutorial.environments.Doorway;
 import com.example.first_game_tutorial.environments.MapManager;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.interfaces.GameStateInterface;
@@ -75,9 +76,9 @@ public class Playing extends BaseState implements GameStateInterface {
     @Override
     public void update(double delta) {
         updatePlayerMove(delta);
-        mapManager.setCameraValues(cameraX, cameraY);
         player.update(delta, movePlayer);
-
+        mapManager.setCameraValues(cameraX, cameraY);
+        checkForDoorway();
         udpateWepHitbox();
         if (attacking) if (!attackChecked){
             checkAttack();
@@ -88,6 +89,13 @@ public class Playing extends BaseState implements GameStateInterface {
 
 //        buildingManager.setCameraValues(cameraX, cameraY);
 
+    }
+
+    private void checkForDoorway() {
+        Doorway doorwayPlayerIsOn = mapManager.isPlayerOnDoorway(player.getHitbox());
+        if(doorwayPlayerIsOn != null) {
+            mapManager.changeMap(doorwayPlayerIsOn.getGameMap());
+        }
     }
 
     private void checkAttack() {

@@ -29,7 +29,7 @@ public class GameLoop implements Runnable{
             fps++;
             long now = System.currentTimeMillis();
             if (now - lastPFSCheck >= 1000){
-                System.out.println(fps);
+//                System.out.println(fps);
                 fps = 0;
                 lastPFSCheck += 1000;
             }
