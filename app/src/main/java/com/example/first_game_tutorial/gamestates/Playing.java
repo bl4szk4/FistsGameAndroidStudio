@@ -10,7 +10,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
-import com.example.first_game_tutorial.entities.BuildingManager;
 import com.example.first_game_tutorial.entities.Character;
 import com.example.first_game_tutorial.entities.Player;
 import com.example.first_game_tutorial.entities.Weapons;
@@ -36,6 +35,7 @@ public class Playing extends BaseState implements GameStateInterface {
     private final Paint redPaint;
     private RectF attackBox = null;
     private boolean attacking, attackChecked;
+    private boolean doorwayPassed;
 
 
     public Playing(Game game) {
@@ -43,7 +43,7 @@ public class Playing extends BaseState implements GameStateInterface {
 
         player = new Player();
         skeletons = new ArrayList<>();
-        mapManager = new MapManager();
+        mapManager = new MapManager(this);
         calcStartCamVal();
 
 
@@ -63,6 +63,10 @@ public class Playing extends BaseState implements GameStateInterface {
 //        buildingManager = new BuildingManager();
     }
 
+    public void setCamValues(PointF cameraPos){
+        this.cameraX = cameraPos.x;
+        this.cameraY = cameraPos.y;
+    }
     private void calcStartCamVal() {
         cameraY = GAME_HEIGHT / 2 - mapManager.getMaxHeightCurrentMap() / 2;
         cameraX = GAME_WIDTH / 2 - mapManager.getMaxWidthCurrentMap() / 2;
@@ -94,8 +98,15 @@ public class Playing extends BaseState implements GameStateInterface {
     private void checkForDoorway() {
         Doorway doorwayPlayerIsOn = mapManager.isPlayerOnDoorway(player.getHitbox());
         if(doorwayPlayerIsOn != null) {
-            mapManager.changeMap(doorwayPlayerIsOn.getGameMap());
+            if(!doorwayPassed)
+                mapManager.changeMap(doorwayPlayerIsOn.getDoorwayConnectedTo());
+        } else {
+            doorwayPassed = false;
         }
+    }
+
+    public void setDoorwayPassed(boolean doorwayPassed) {
+        this.doorwayPassed = doorwayPassed;
     }
 
     private void checkAttack() {

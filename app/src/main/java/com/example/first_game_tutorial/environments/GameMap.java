@@ -1,20 +1,17 @@
 package com.example.first_game_tutorial.environments;
 
-import android.graphics.Canvas;
-
 import com.example.first_game_tutorial.entities.Building;
-import com.example.first_game_tutorial.helpers.GameConstants;
 
 import java.util.ArrayList;
 
 public class GameMap {
 
     private int[][] spriteIds;
-    private Floor floorType;
+    private Tiles floorType;
     private ArrayList<Building> buildingArrayList;
     private ArrayList<Doorway> doorwayArrayList;
 
-    public GameMap(int[][] spriteIds, Floor floorType, ArrayList<Building> buildingArrayList){
+    public GameMap(int[][] spriteIds, Tiles floorType, ArrayList<Building> buildingArrayList){
         this.spriteIds = spriteIds;
         this.floorType = floorType;
         this.buildingArrayList = buildingArrayList;
@@ -29,7 +26,7 @@ public class GameMap {
         return doorwayArrayList;
     }
 
-    public Floor getFloorType() {
+    public Tiles getFloorType() {
         return floorType;
     }
 

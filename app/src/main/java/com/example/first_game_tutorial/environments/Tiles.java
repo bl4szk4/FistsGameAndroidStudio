@@ -8,12 +8,12 @@ import com.example.first_game_tutorial.R;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.interfaces.BitmapMethods;
 
-public enum Floor implements BitmapMethods {
+public enum Tiles implements BitmapMethods {
     OUTSIDE(R.drawable.tileset_floor, 22, 26),
-    INSIDE(R.drawable.floor_inside, 22, 17);
+    INSIDE(R.drawable.floor_inside, 22, 22);
     private Bitmap[] sprites;
 
-    Floor(int resID, int tilesInWidth, int tilesInHeight) {
+    Tiles(int resID, int tilesInWidth, int tilesInHeight) {
         options.inScaled = false;
         sprites = new Bitmap[tilesInHeight * tilesInWidth];
         Bitmap spriteSheet = BitmapFactory.decodeResource(MainActivity.getGameContext().getResources(), resID, options);

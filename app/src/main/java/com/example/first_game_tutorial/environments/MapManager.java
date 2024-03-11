@@ -6,16 +6,20 @@ import android.graphics.RectF;
 
 import com.example.first_game_tutorial.entities.Building;
 import com.example.first_game_tutorial.entities.Buildings;
+import com.example.first_game_tutorial.gamestates.Playing;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.HelpMethods;
+import com.example.first_game_tutorial.main.MainActivity;
 
 import java.util.ArrayList;
 
 public class MapManager {
     private GameMap currentMap, outsideMap, insideMap;
     private  float cameraX, cameraY;
+    private Playing playing;
 
-    public MapManager(){
+    public MapManager(Playing playing){
+        this.playing = playing;
         initTestMap();
     }
 
@@ -62,9 +66,18 @@ public class MapManager {
         return null;
     }
 
-    public void changeMap(GameMap gameMap){
-        this.currentMap = gameMap;
+    public void changeMap(Doorway doorwayTarget){
+        this.currentMap = doorwayTarget.getGameMapLocatedIn();
+        float cX = MainActivity.GAME_WIDTH / 2 -  doorwayTarget.getPosOfDoorway().x;
+        float cY = MainActivity.GAME_HEIGHT / 2 - doorwayTarget.getPosOfDoorway().y;
+
+        playing.setCamValues(new PointF(cX, cY));
+        cameraX = cX;
+        cameraY = cY;
+
+        playing.setDoorwayPassed(true);
     }
+
     private void initTestMap() {
         int[][] outsideArr = {
                 {454, 276, 275, 275, 190, 275, 275, 279, 275, 275, 275, 297, 110, 8, 1, 1, 1, 2, 110, 132},
@@ -92,19 +105,24 @@ public class MapManager {
         };
 
         int[][] insideArr = {
-                {0, 1, 1, 1, 2},
-                {22, 23, 23, 23, 24},
-                {22, 23, 23, 23, 24},
-                {22, 23, 23, 23, 24},
-                {44, 45, 45, 45, 46}
+                {374, 377, 377, 377, 377, 377, 378},
+                {396,   0,   1,   1,   1,   2, 400},
+                {396,  22,  23,  23,  23,  24, 400},
+                {396,  22,  23,  23,  23,  24, 400},
+                {396,  22,  23,  23,  23,  24, 400},
+                {396,  44,  45,  45,  45,  46, 400},
+                {462, 465, 463, 394, 464, 465, 466}
         };
 
         ArrayList<Building> buildingArrayList = new ArrayList<>();
         buildingArrayList.add(new Building(new PointF(200, 200), Buildings.HOUSE_ONE));
 
-        insideMap = new GameMap(insideArr, Floor.INSIDE, null);
-        outsideMap = new GameMap(outsideArr, Floor.OUTSIDE, buildingArrayList);
-        HelpMethods.AddDoorwayToGameMa(outsideMap, insideMap, 0);
+        insideMap = new GameMap(insideArr, Tiles.INSIDE, null);
+        outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList);
+//        HelpMethods.AddDoorwayToGameMa(outsideMap, insideMap, 0);
+        HelpMethods.ConnectTwoDoorways(outsideMap, HelpMethods.CreateHitboxForDoorway(outsideMap, 0),
+                insideMap, HelpMethods.CreateHitboxForDoorway(3,6));
+
         currentMap = outsideMap;
 
     }
