@@ -6,6 +6,8 @@ import android.graphics.RectF;
 
 import com.example.first_game_tutorial.entities.Building;
 import com.example.first_game_tutorial.entities.Buildings;
+import com.example.first_game_tutorial.entities.GameObject;
+import com.example.first_game_tutorial.entities.GameObjects;
 import com.example.first_game_tutorial.gamestates.Playing;
 import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.HelpMethods;
@@ -24,23 +26,30 @@ public class MapManager {
         initTestMap();
     }
 
+    public void draw(Canvas c){
+        drawTiles(c);
+        drawBuildings(c);
+        drawObjects(c);
+    }
+
+    private void drawObjects(Canvas c) {
+        if(currentMap.getGameObjectArrayList() != null)
+            for (GameObject gameObject: currentMap.getGameObjectArrayList())
+                c.drawBitmap(gameObject.getObjectType().getObjectImg(), gameObject.getHitbox().left + cameraX, gameObject.getHitbox().top + cameraY, null);
+    }
+
     public void drawBuildings(Canvas c){
         if (currentMap.getBuildingArrayList() != null)
             for(Building b:currentMap.getBuildingArrayList()){
                 c.drawBitmap(b.getBuildingType().getHouseImage(), b.getPos().x + cameraX, b.getPos().y + cameraY, null);
             }
     }
-
     public void drawTiles(Canvas c){
         for(int j=0; j<currentMap.getArrayHeight(); j++){
             for(int i=0; i<currentMap.getArrayWidth(); i++){
                 c.drawBitmap(currentMap.getFloorType().getSprite(currentMap.getSpriteId(i, j)), i* GameConstants.Sprite.SIZE + cameraX, j*GameConstants.Sprite.SIZE + cameraY, null);
             }
         }
-    }
-    public void draw(Canvas c){
-        drawTiles(c);
-        drawBuildings(c);
     }
     public boolean canMoveHere(float x, float y){
         if(x < 0 || y < 0)
@@ -122,8 +131,16 @@ public class MapManager {
         ArrayList<Building> buildingArrayList = new ArrayList<>();
         buildingArrayList.add(new Building(new PointF(200, 200), Buildings.HOUSE_ONE));
 
-        insideMap = new GameMap(insideArr, Tiles.INSIDE, null, HelpMethods.GetSkeletonsRandomized(2, insideArr));
-        outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList, HelpMethods.GetSkeletonsRandomized(5, outsideArr));
+        ArrayList<GameObject> gameObjectArrayList = new ArrayList<>();
+        gameObjectArrayList.add(new GameObject(new PointF(700,200), GameObjects.PILLAR_YELLOW));
+        gameObjectArrayList.add(new GameObject(new PointF(700,400), GameObjects.STATUE_ANGRY_YELLOW));
+        gameObjectArrayList.add(new GameObject(new PointF(800,200), GameObjects.FROG_GREEN));
+        gameObjectArrayList.add(new GameObject(new PointF(0,300), GameObjects.BASKET_EMPTY));
+
+
+
+        insideMap = new GameMap(insideArr, Tiles.INSIDE, null, null, HelpMethods.GetSkeletonsRandomized(2, insideArr));
+        outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList, gameObjectArrayList, HelpMethods.GetSkeletonsRandomized(5, outsideArr));
 
         HelpMethods.ConnectTwoDoorways(outsideMap, HelpMethods.CreateHitboxForDoorway(outsideMap, 0),
                 insideMap, HelpMethods.CreateHitboxForDoorway(3,6));

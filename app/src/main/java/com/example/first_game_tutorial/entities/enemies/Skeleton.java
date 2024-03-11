@@ -36,7 +36,7 @@ public class Skeleton extends Character {
             case GameConstants.Face_Dir.DOWN:
                 hitbox.top += delta * 300;
                 hitbox.bottom += delta * 300;
-                if(hitbox.bottom >= gameMap.getArrayHeight())
+                if(hitbox.bottom >= gameMap.getMapHeight())
                     faceDir = GameConstants.Face_Dir.UP;
                 break;
             case GameConstants.Face_Dir.UP:

@@ -1,6 +1,7 @@
 package com.example.first_game_tutorial.environments;
 
 import com.example.first_game_tutorial.entities.Building;
+import com.example.first_game_tutorial.entities.GameObject;
 import com.example.first_game_tutorial.entities.enemies.Skeleton;
 import com.example.first_game_tutorial.helpers.GameConstants;
 
@@ -13,17 +14,24 @@ public class GameMap {
     private ArrayList<Building> buildingArrayList;
     private ArrayList<Doorway> doorwayArrayList;
     private ArrayList<Skeleton> skeletonArrayList;
+    private ArrayList<GameObject> gameObjectArrayList;
 
     public ArrayList<Skeleton> getSkeletonArrayList() {
         return skeletonArrayList;
     }
 
-    public GameMap(int[][] spriteIds, Tiles floorType, ArrayList<Building> buildingArrayList, ArrayList<Skeleton> skeletonArrayList){
+    public GameMap(int[][] spriteIds, Tiles floorType, ArrayList<Building> buildingArrayList, ArrayList<GameObject> gameObjectArrayList, ArrayList<Skeleton> skeletonArrayList){
         this.spriteIds = spriteIds;
         this.floorType = floorType;
         this.buildingArrayList = buildingArrayList;
+        this.gameObjectArrayList = gameObjectArrayList;
         this.doorwayArrayList = new ArrayList<>();
         this.skeletonArrayList = skeletonArrayList;
+
+    }
+
+    public ArrayList<GameObject> getGameObjectArrayList() {
+        return gameObjectArrayList;
     }
 
     public int getMapWidth(){
