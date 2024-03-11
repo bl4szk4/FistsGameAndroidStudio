@@ -1,6 +1,8 @@
 package com.example.first_game_tutorial.environments;
 
 import com.example.first_game_tutorial.entities.Building;
+import com.example.first_game_tutorial.entities.enemies.Skeleton;
+import com.example.first_game_tutorial.helpers.GameConstants;
 
 import java.util.ArrayList;
 
@@ -10,14 +12,27 @@ public class GameMap {
     private Tiles floorType;
     private ArrayList<Building> buildingArrayList;
     private ArrayList<Doorway> doorwayArrayList;
+    private ArrayList<Skeleton> skeletonArrayList;
 
-    public GameMap(int[][] spriteIds, Tiles floorType, ArrayList<Building> buildingArrayList){
+    public ArrayList<Skeleton> getSkeletonArrayList() {
+        return skeletonArrayList;
+    }
+
+    public GameMap(int[][] spriteIds, Tiles floorType, ArrayList<Building> buildingArrayList, ArrayList<Skeleton> skeletonArrayList){
         this.spriteIds = spriteIds;
         this.floorType = floorType;
         this.buildingArrayList = buildingArrayList;
         this.doorwayArrayList = new ArrayList<>();
+        this.skeletonArrayList = skeletonArrayList;
     }
 
+    public int getMapWidth(){
+        return getArrayWidth() * GameConstants.Sprite.SIZE;
+    }
+
+    public int getMap(){
+        return getArrayHeight() * GameConstants.Sprite.SIZE;
+    }
     public void addDoorway(Doorway doorway){
         this.doorwayArrayList.add(doorway);
     }

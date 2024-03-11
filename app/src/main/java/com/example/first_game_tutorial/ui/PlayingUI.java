@@ -70,9 +70,6 @@ public class PlayingUI {
         return isInsideRadius(eventPos, attackBtnCenterPos);
     }
 
-    private void spawnSkeletons(){
-        playing.spawnSkeleton();
-    }
 
     public void touchEvents(MotionEvent event){
         final int action = event.getActionMasked();

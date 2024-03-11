@@ -17,6 +17,7 @@ import com.example.first_game_tutorial.entities.enemies.Skeleton;
 import com.example.first_game_tutorial.environments.Doorway;
 import com.example.first_game_tutorial.environments.MapManager;
 import com.example.first_game_tutorial.helpers.GameConstants;
+import com.example.first_game_tutorial.helpers.HelpMethods;
 import com.example.first_game_tutorial.helpers.interfaces.GameStateInterface;
 import com.example.first_game_tutorial.main.Game;
 import com.example.first_game_tutorial.ui.PlayingUI;
@@ -28,7 +29,7 @@ public class Playing extends BaseState implements GameStateInterface {
     private boolean movePlayer;
     private PointF lastTouchDiff;
     private Player player;
-    private ArrayList<Skeleton> skeletons;
+//    private ArrayList<Skeleton> skeletons;
     private MapManager mapManager;
 //    private BuildingManager buildingManager;
     private PlayingUI playingUI;
@@ -42,7 +43,7 @@ public class Playing extends BaseState implements GameStateInterface {
         super(game);
 
         player = new Player();
-        skeletons = new ArrayList<>();
+//        skeletons = new ArrayList<>();
         mapManager = new MapManager(this);
         calcStartCamVal();
 
@@ -53,10 +54,10 @@ public class Playing extends BaseState implements GameStateInterface {
         redPaint.setColor(Color.RED);
 
         playingUI = new PlayingUI(this);
-
-        for (int i = 0; i < 5; i++){
-            spawnSkeleton();
-        }
+//
+//        for (int i = 0; i < 5; i++){
+//            spawnSkeleton();
+//        }
 
         udpateWepHitbox();
 
@@ -72,11 +73,11 @@ public class Playing extends BaseState implements GameStateInterface {
         cameraX = GAME_WIDTH / 2 - mapManager.getMaxWidthCurrentMap() / 2;
     }
 
-    public void spawnSkeleton(){
-
-        skeletons.add(new Skeleton(new PointF(player.getHitbox().left - cameraX, player.getHitbox().top - cameraY)));
-
-    }
+//    public void spawnSkeleton(){
+//
+//        skeletons.add(new Skeleton(new PointF(player.getHitbox().left - cameraX, player.getHitbox().top - cameraY)));
+//
+//    }
     @Override
     public void update(double delta) {
         updatePlayerMove(delta);
@@ -88,8 +89,8 @@ public class Playing extends BaseState implements GameStateInterface {
             checkAttack();
         }
 
-        for(Skeleton skeleton: skeletons)
-            if (skeleton.isActive()) skeleton.update(delta);
+        for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
+            if (skeleton.isActive()) skeleton.update(delta, mapManager.getCurrentMap());
 
 //        buildingManager.setCameraValues(cameraX, cameraY);
 
@@ -117,7 +118,7 @@ public class Playing extends BaseState implements GameStateInterface {
         attackBoxWithoutCam.bottom -= cameraY;
         attackBoxWithoutCam.right -= cameraX;
 
-        for(Skeleton s: skeletons){
+        for(Skeleton s: mapManager.getCurrentMap().getSkeletonArrayList()){
             if(attackBoxWithoutCam.intersects(s.getHitbox().left, s.getHitbox().top, s.getHitbox().right, s.getHitbox().bottom)){
                 s.setActive(false);
             }
@@ -183,7 +184,7 @@ public class Playing extends BaseState implements GameStateInterface {
         drawPlayer(c);
 
 
-        for(Skeleton skeleton: skeletons)
+        for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
             if (skeleton.isActive()) drawCharacter(c, skeleton);
 
         playingUI.draw(c);
@@ -294,20 +295,34 @@ public class Playing extends BaseState implements GameStateInterface {
         if (lastTouchDiff.y < 0)
             ySpeed *= -1;
 
-        int pWidth = (int)player.getHitbox().width();
-        int pHeight = (int)player.getHitbox().height();
-
-        if (xSpeed <= 0)
-            pWidth = 0;
-        if (ySpeed <= 0)
-            pHeight = 0;
+//        int pWidth = (int)player.getHitbox().width();
+//        int pHeight = (int)player.getHitbox().height();
+//
+//        if (xSpeed <= 0)
+//            pWidth = 0;
+//        if (ySpeed <= 0)
+//            pHeight = 0;
 
         float deltaX = xSpeed * baseSpeed * -1;
         float deltaY = ySpeed * baseSpeed * -1;
-        if (mapManager.canMoveHere(player.getHitbox().left + cameraX * -1 + deltaX * -1 + pWidth, player.getHitbox().top + cameraY * -1 + deltaY * -1 + pHeight)) {
+
+        float deltaCamX = cameraX * -1 + deltaX * -1;
+        float deltaCamY = cameraY * -1 + deltaY * -1;
+
+        if(HelpMethods.CanWalkHere(player.getHitbox() ,deltaCamX, deltaCamY, mapManager.getCurrentMap())){
             cameraX += deltaX;
             cameraY += deltaY;
         }
+
+//        float xPosToCheck = player.getHitbox().left + cameraX * -1 + deltaX * -1 + pWidth;
+//        float yPosToCheck = player.getHitbox().top + cameraY * -1 + deltaY * -1 + pHeight;
+
+//        if(HelpMethods.CanWalkHere(xPosToCheck, yPosToCheck, mapManager.getCurrentMap())){
+//
+//            cameraX += deltaX;
+//            cameraY += deltaY;
+//        }
+
     }
 
         public void setPlayerMoveTrue(PointF lastTouchDiff){

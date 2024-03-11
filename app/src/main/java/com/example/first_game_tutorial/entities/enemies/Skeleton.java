@@ -7,6 +7,7 @@ import android.graphics.PointF;
 
 import com.example.first_game_tutorial.entities.Character;
 import com.example.first_game_tutorial.entities.GameCharacters;
+import com.example.first_game_tutorial.environments.GameMap;
 import com.example.first_game_tutorial.helpers.GameConstants;
 
 import java.util.Random;
@@ -19,13 +20,13 @@ public class Skeleton extends Character {
         super(pos, GameCharacters.SKELETON);
     }
     
-    public void update(double delta){
-        updateMove(delta);
+    public void update(double delta, GameMap gameMap){
+        updateMove(delta, gameMap);
         updateAnimation();
         
     }
 
-    private void updateMove(double delta) {
+    private void updateMove(double delta, GameMap gameMap) {
 
         if(System.currentTimeMillis() - lastDirChange >= 5000){
             lastDirChange = System.currentTimeMillis();
@@ -35,7 +36,7 @@ public class Skeleton extends Character {
             case GameConstants.Face_Dir.DOWN:
                 hitbox.top += delta * 300;
                 hitbox.bottom += delta * 300;
-                if(hitbox.top >= GAME_HEIGHT)
+                if(hitbox.bottom >= gameMap.getArrayHeight())
                     faceDir = GameConstants.Face_Dir.UP;
                 break;
             case GameConstants.Face_Dir.UP:
@@ -53,7 +54,7 @@ public class Skeleton extends Character {
             case GameConstants.Face_Dir.RIGHT:
                 hitbox.left += delta * 300;
                 hitbox.right += delta * 300;
-                if(hitbox.left >= GAME_WIDTH)
+                if(hitbox.right >= gameMap.getMapWidth())
                     faceDir = GameConstants.Face_Dir.LEFT;
                 break;
         }

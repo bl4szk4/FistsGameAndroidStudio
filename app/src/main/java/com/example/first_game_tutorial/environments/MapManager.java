@@ -11,6 +11,7 @@ import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.HelpMethods;
 import com.example.first_game_tutorial.main.MainActivity;
 
+import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
 
 public class MapManager {
@@ -78,6 +79,10 @@ public class MapManager {
         playing.setDoorwayPassed(true);
     }
 
+    public GameMap getCurrentMap() {
+        return currentMap;
+    }
+
     private void initTestMap() {
         int[][] outsideArr = {
                 {454, 276, 275, 275, 190, 275, 275, 279, 275, 275, 275, 297, 110, 8, 1, 1, 1, 2, 110, 132},
@@ -117,9 +122,9 @@ public class MapManager {
         ArrayList<Building> buildingArrayList = new ArrayList<>();
         buildingArrayList.add(new Building(new PointF(200, 200), Buildings.HOUSE_ONE));
 
-        insideMap = new GameMap(insideArr, Tiles.INSIDE, null);
-        outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList);
-//        HelpMethods.AddDoorwayToGameMa(outsideMap, insideMap, 0);
+        insideMap = new GameMap(insideArr, Tiles.INSIDE, null, HelpMethods.GetSkeletonsRandomized(2, insideArr));
+        outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList, HelpMethods.GetSkeletonsRandomized(5, outsideArr));
+
         HelpMethods.ConnectTwoDoorways(outsideMap, HelpMethods.CreateHitboxForDoorway(outsideMap, 0),
                 insideMap, HelpMethods.CreateHitboxForDoorway(3,6));
 
