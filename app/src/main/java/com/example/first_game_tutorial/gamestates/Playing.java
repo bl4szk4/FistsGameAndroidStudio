@@ -295,14 +295,6 @@ public class Playing extends BaseState implements GameStateInterface {
         if (lastTouchDiff.y < 0)
             ySpeed *= -1;
 
-//        int pWidth = (int)player.getHitbox().width();
-//        int pHeight = (int)player.getHitbox().height();
-//
-//        if (xSpeed <= 0)
-//            pWidth = 0;
-//        if (ySpeed <= 0)
-//            pHeight = 0;
-
         float deltaX = xSpeed * baseSpeed * -1;
         float deltaY = ySpeed * baseSpeed * -1;
 
@@ -312,16 +304,20 @@ public class Playing extends BaseState implements GameStateInterface {
         if(HelpMethods.CanWalkHere(player.getHitbox() ,deltaCamX, deltaCamY, mapManager.getCurrentMap())){
             cameraX += deltaX;
             cameraY += deltaY;
+        }else {
+            if(HelpMethods.CanWalkHereUpDown(player.getHitbox(), deltaCamY, cameraX * -1,  mapManager.getCurrentMap())){
+                cameraY += deltaY;
+            }else {
+                cameraY = HelpMethods.MoveNextToTileUpDown(player.getHitbox(), cameraY, deltaY);
+            }
+            if(HelpMethods.CanWalkHereLeftRight(player.getHitbox(), deltaCamX,cameraY * -1, mapManager.getCurrentMap())){
+                cameraX += deltaX;
+            } else {
+                cameraX = HelpMethods.MoveNextToTileLeftRight(player.getHitbox(), cameraX, deltaX);
+            }
+
+
         }
-
-//        float xPosToCheck = player.getHitbox().left + cameraX * -1 + deltaX * -1 + pWidth;
-//        float yPosToCheck = player.getHitbox().top + cameraY * -1 + deltaY * -1 + pHeight;
-
-//        if(HelpMethods.CanWalkHere(xPosToCheck, yPosToCheck, mapManager.getCurrentMap())){
-//
-//            cameraX += deltaX;
-//            cameraY += deltaY;
-//        }
 
     }
 

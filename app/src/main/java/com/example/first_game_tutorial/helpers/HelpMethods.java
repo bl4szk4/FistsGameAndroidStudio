@@ -85,12 +85,48 @@ public class HelpMethods {
 
     }
 
+    public static float MoveNextToTileUpDown(RectF hitbox, float cameraY, float deltaY){
+
+        int currentTile;
+        int playerPosY;
+        float cameraYReturn;
+
+        if(deltaY > 0){
+            playerPosY = (int) (hitbox.top - cameraY);
+            currentTile = playerPosY / GameConstants.Sprite.SIZE;
+            cameraYReturn = hitbox.top - (currentTile * GameConstants.Sprite.SIZE);
+        }else {
+            playerPosY = (int) (hitbox.bottom - cameraY);
+            currentTile = playerPosY / GameConstants.Sprite.SIZE;
+            cameraYReturn = hitbox.bottom - (currentTile * GameConstants.Sprite.SIZE) - (GameConstants.Sprite.SIZE - 1);
+        }
+        return cameraYReturn;
+    }
+
+
+    public static float MoveNextToTileLeftRight(RectF hitbox, float cameraX, float deltaX){
+
+        int currentTile;
+        int playerPosX;
+        float cameraXReturn;
+
+        if(deltaX > 0){
+            playerPosX = (int) (hitbox.left - cameraX);
+            currentTile = playerPosX / GameConstants.Sprite.SIZE;
+            cameraXReturn = hitbox.left - (currentTile * GameConstants.Sprite.SIZE);
+        }else {
+            playerPosX = (int) (hitbox.right - cameraX);
+            currentTile = playerPosX / GameConstants.Sprite.SIZE;
+            cameraXReturn = hitbox.right - (currentTile * GameConstants.Sprite.SIZE) - (GameConstants.Sprite.SIZE - 1);
+        }
+        return cameraXReturn;
+    }
     public  static boolean CanWalkHere(RectF hitbox,float deltaX, float deltaY, GameMap gameMap){
         if(hitbox.left + deltaX < 0 || hitbox.top + deltaY < 0)
             return false;
         else if (hitbox.right + deltaX >= gameMap.getMapWidth()) {
             return false;
-        } else if (hitbox.bottom + deltaY >= gameMap.getArrayHeight()) {
+        } else if (hitbox.bottom + deltaY >= gameMap.getMapHeight()) {
             return false;
         }
 
@@ -103,9 +139,36 @@ public class HelpMethods {
 
     }
 
+    public static boolean CanWalkHereUpDown(RectF hitbox, float deltaY,float currCamX, GameMap gameMap){
+        if(hitbox.top + deltaY < 0)
+            return false;
+
+        else if (hitbox.bottom + deltaY >= gameMap.getMapHeight()) {
+            return false;
+        }
+        Point[] tileCords = GetTileCords(hitbox, currCamX, deltaY);
+
+        int[] tileIds = GetTileIds(tileCords, gameMap);
+        return IsTilesWalkable(tileIds, gameMap.getFloorType());
+    }
+
+    public static boolean CanWalkHereLeftRight(RectF hitbox, float deltaX,float currCamY, GameMap gameMap){
+        if(hitbox.left + deltaX < 0)
+            return false;
+
+        else if (hitbox.right + deltaX >= gameMap.getMapWidth()) {
+            return false;
+        }
+        Point[] tileCords = GetTileCords(hitbox, deltaX, currCamY);
+
+        int[] tileIds = GetTileIds(tileCords, gameMap);
+
+        return IsTilesWalkable(tileIds, gameMap.getFloorType());
+    }
+
     public static boolean IsTilesWalkable(int[] tileIds, Tiles tilesType){
         for(int i: tileIds){
-            if( ! IsTileWalkable(i, tilesType))
+            if( ! (IsTileWalkable(i, tilesType)))
                 return false;
         }
         return true;
@@ -124,10 +187,10 @@ public class HelpMethods {
     private static Point[] GetTileCords(RectF hitbox, float deltaX, float deltaY) {
         Point[] tileCords = new Point[4];
 
-        int left = (int) (hitbox.left + deltaX) / GameConstants.Sprite.SIZE;
-        int right = (int) (hitbox.right + deltaX) / GameConstants.Sprite.SIZE;
-        int top = (int) (hitbox.top + deltaY) / GameConstants.Sprite.SIZE;
-        int bottom = (int) (hitbox.bottom + deltaY) / GameConstants.Sprite.SIZE;
+        int left = (int) ((hitbox.left + deltaX) / GameConstants.Sprite.SIZE);
+        int right = (int) ((hitbox.right + deltaX) / GameConstants.Sprite.SIZE);
+        int top = (int) ((hitbox.top + deltaY) / GameConstants.Sprite.SIZE);
+        int bottom = (int) ((hitbox.bottom + deltaY) / GameConstants.Sprite.SIZE);
 
         tileCords[0] = new Point(left, top);
         tileCords[1] = new Point(right, top);
@@ -138,8 +201,9 @@ public class HelpMethods {
     }
 
     public static boolean IsTileWalkable(int tileId, Tiles tilesType){
-        if(tilesType == Tiles.INSIDE)
+        if(tilesType == Tiles.INSIDE) {
             return (tileId == 394 || tileId < 374);
+        }
         return true;
     }
 }

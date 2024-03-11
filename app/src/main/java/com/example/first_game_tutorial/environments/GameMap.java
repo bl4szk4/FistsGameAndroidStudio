@@ -59,4 +59,8 @@ public class GameMap {
     public ArrayList<Building> getBuildingArrayList() {
         return buildingArrayList;
     }
+
+    public float getMapHeight() {
+        return getArrayHeight()*GameConstants.Sprite.SIZE;
+    }
 }
