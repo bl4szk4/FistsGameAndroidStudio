@@ -10,7 +10,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
+import com.example.first_game_tutorial.entities.Building;
 import com.example.first_game_tutorial.entities.Character;
+import com.example.first_game_tutorial.entities.Entity;
+import com.example.first_game_tutorial.entities.GameObject;
 import com.example.first_game_tutorial.entities.Player;
 import com.example.first_game_tutorial.entities.Weapons;
 import com.example.first_game_tutorial.entities.enemies.Skeleton;
@@ -22,7 +25,7 @@ import com.example.first_game_tutorial.helpers.interfaces.GameStateInterface;
 import com.example.first_game_tutorial.main.Game;
 import com.example.first_game_tutorial.ui.PlayingUI;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Playing extends BaseState implements GameStateInterface {
     private float cameraX, cameraY;
@@ -37,6 +40,9 @@ public class Playing extends BaseState implements GameStateInterface {
     private RectF attackBox = null;
     private boolean attacking, attackChecked;
     private boolean doorwayPassed;
+
+    private Entity[] listOfDrawables;
+    private boolean listOfEntitiesMade = false;
 
 
     public Playing(Game game) {
@@ -80,6 +86,7 @@ public class Playing extends BaseState implements GameStateInterface {
 //    }
     @Override
     public void update(double delta) {
+        buildEntityList();
         updatePlayerMove(delta);
         player.update(delta, movePlayer);
         mapManager.setCameraValues(cameraX, cameraY);
@@ -92,8 +99,19 @@ public class Playing extends BaseState implements GameStateInterface {
         for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
             if (skeleton.isActive()) skeleton.update(delta, mapManager.getCurrentMap());
 
-//        buildingManager.setCameraValues(cameraX, cameraY);
+        sortArray();
 
+    }
+
+    private void buildEntityList() {
+        listOfDrawables = mapManager.getCurrentMap().getDrawableList();
+        listOfDrawables[listOfDrawables.length - 1] = player;
+        listOfEntitiesMade = true;
+    }
+
+    private void sortArray() {
+        player.setLastCameraYVal(cameraY);
+        Arrays.sort(listOfDrawables);
     }
 
     private void checkForDoorway() {
@@ -178,18 +196,30 @@ public class Playing extends BaseState implements GameStateInterface {
 
     @Override
     public void render(Canvas c) {
-        mapManager.draw(c);
-//        buildingManager.draw(c);
+        mapManager.drawTiles(c);
+        if (listOfEntitiesMade)
+            drawSortedEntities(c);
 
-        drawPlayer(c);
-
-
-        for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
-            if (skeleton.isActive()) drawCharacter(c, skeleton);
+//        for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
+//            if (skeleton.isActive()) drawCharacter(c, skeleton);
 
         playingUI.draw(c);
     }
 
+    private void drawSortedEntities(Canvas c) {
+        for(Entity e: listOfDrawables){
+            if(e instanceof Skeleton skeleton){
+                if(skeleton.isActive()) drawCharacter(c, skeleton);
+            } else if (e instanceof GameObject gameObject) {
+                mapManager.drawObject(c, gameObject);
+            } else if (e instanceof Building building) {
+                mapManager.drawBuilding(c, building);
+            } else if (e instanceof Player) {
+                drawPlayer(c);
+
+            }
+        }
+    }
 
 
     @Override

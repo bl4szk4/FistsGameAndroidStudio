@@ -1,6 +1,7 @@
 package com.example.first_game_tutorial.environments;
 
 import com.example.first_game_tutorial.entities.Building;
+import com.example.first_game_tutorial.entities.Entity;
 import com.example.first_game_tutorial.entities.GameObject;
 import com.example.first_game_tutorial.entities.enemies.Skeleton;
 import com.example.first_game_tutorial.helpers.GameConstants;
@@ -70,5 +71,30 @@ public class GameMap {
 
     public float getMapHeight() {
         return getArrayHeight()*GameConstants.Sprite.SIZE;
+    }
+
+    public Entity[] getDrawableList(){
+        Entity[] list = new Entity[getDrawableAmount()];
+
+        int i = 0;
+
+        for (Building b: buildingArrayList)
+            list[i++] = b;
+        for (Skeleton s: skeletonArrayList)
+            list[i++] = s;
+        for (GameObject g: gameObjectArrayList)
+            list[i++] = g;
+
+        return list;
+    }
+
+    private int getDrawableAmount(){
+        int amount = 0;
+        amount += buildingArrayList.size();
+        amount += skeletonArrayList.size();
+        amount += gameObjectArrayList.size();
+        amount ++;  //player
+
+        return amount;
     }
 }

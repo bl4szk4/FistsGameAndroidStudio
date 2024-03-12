@@ -26,24 +26,17 @@ public class MapManager {
         initTestMap();
     }
 
-    public void draw(Canvas c){
-        drawTiles(c);
-        drawBuildings(c);
-        drawObjects(c);
+
+
+    public void drawObject(Canvas c, GameObject go){
+        c.drawBitmap(go.getObjectType().getObjectImg(), go.getHitbox().left + cameraX, go.getHitbox().top + cameraY, null);
     }
 
-    private void drawObjects(Canvas c) {
-        if(currentMap.getGameObjectArrayList() != null)
-            for (GameObject gameObject: currentMap.getGameObjectArrayList())
-                c.drawBitmap(gameObject.getObjectType().getObjectImg(), gameObject.getHitbox().left + cameraX, gameObject.getHitbox().top + cameraY, null);
+    public void drawBuilding(Canvas c, Building b){
+        c.drawBitmap(b.getBuildingType().getHouseImage(), b.getPos().x + cameraX, b.getPos().y + cameraY, null);
     }
 
-    public void drawBuildings(Canvas c){
-        if (currentMap.getBuildingArrayList() != null)
-            for(Building b:currentMap.getBuildingArrayList()){
-                c.drawBitmap(b.getBuildingType().getHouseImage(), b.getPos().x + cameraX, b.getPos().y + cameraY, null);
-            }
-    }
+
     public void drawTiles(Canvas c){
         for(int j=0; j<currentMap.getArrayHeight(); j++){
             for(int i=0; i<currentMap.getArrayWidth(); i++){
