@@ -77,22 +77,29 @@ public class GameMap {
         Entity[] list = new Entity[getDrawableAmount()];
 
         int i = 0;
+        if(buildingArrayList !=null)
+            for (Building b: buildingArrayList)
+                list[i++] = b;
+        if(skeletonArrayList !=null)
 
-        for (Building b: buildingArrayList)
-            list[i++] = b;
-        for (Skeleton s: skeletonArrayList)
-            list[i++] = s;
-        for (GameObject g: gameObjectArrayList)
-            list[i++] = g;
+            for (Skeleton s: skeletonArrayList)
+                list[i++] = s;
+        if(gameObjectArrayList !=null)
+
+            for (GameObject g: gameObjectArrayList)
+                list[i++] = g;
 
         return list;
     }
 
     private int getDrawableAmount(){
         int amount = 0;
-        amount += buildingArrayList.size();
-        amount += skeletonArrayList.size();
-        amount += gameObjectArrayList.size();
+        if(buildingArrayList != null)
+            amount += buildingArrayList.size();
+        if(skeletonArrayList != null)
+            amount += skeletonArrayList.size();
+        if(gameObjectArrayList != null)
+            amount += gameObjectArrayList.size();
         amount ++;  //player
 
         return amount;

@@ -199,10 +199,6 @@ public class Playing extends BaseState implements GameStateInterface {
         mapManager.drawTiles(c);
         if (listOfEntitiesMade)
             drawSortedEntities(c);
-
-//        for(Skeleton skeleton: mapManager.getCurrentMap().getSkeletonArrayList())
-//            if (skeleton.isActive()) drawCharacter(c, skeleton);
-
         playingUI.draw(c);
     }
 
@@ -337,16 +333,10 @@ public class Playing extends BaseState implements GameStateInterface {
         }else {
             if(HelpMethods.CanWalkHereUpDown(player.getHitbox(), deltaCamY, cameraX * -1,  mapManager.getCurrentMap())){
                 cameraY += deltaY;
-            }else {
-                cameraY = HelpMethods.MoveNextToTileUpDown(player.getHitbox(), cameraY, deltaY);
             }
             if(HelpMethods.CanWalkHereLeftRight(player.getHitbox(), deltaCamX,cameraY * -1, mapManager.getCurrentMap())){
                 cameraX += deltaX;
-            } else {
-                cameraX = HelpMethods.MoveNextToTileLeftRight(player.getHitbox(), cameraX, deltaX);
             }
-
-
         }
 
     }

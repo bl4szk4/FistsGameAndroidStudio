@@ -13,7 +13,6 @@ import com.example.first_game_tutorial.helpers.GameConstants;
 import com.example.first_game_tutorial.helpers.HelpMethods;
 import com.example.first_game_tutorial.main.MainActivity;
 
-import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
 
 public class MapManager {
@@ -29,11 +28,11 @@ public class MapManager {
 
 
     public void drawObject(Canvas c, GameObject go){
-        c.drawBitmap(go.getObjectType().getObjectImg(), go.getHitbox().left + cameraX, go.getHitbox().top + cameraY, null);
+        c.drawBitmap(go.getObjectType().getObjectImg(), go.getHitbox().left + cameraX, go.getHitbox().top - go.getObjectType().getHitboxRoof() + cameraY, null);
     }
 
     public void drawBuilding(Canvas c, Building b){
-        c.drawBitmap(b.getBuildingType().getHouseImage(), b.getPos().x + cameraX, b.getPos().y + cameraY, null);
+        c.drawBitmap(b.getBuildingType().getHouseImage(), b.getPos().x + cameraX, b.getPos().y - b.getBuildingType().getHitboxRoof() + cameraY, null);
     }
 
 
@@ -135,8 +134,8 @@ public class MapManager {
         insideMap = new GameMap(insideArr, Tiles.INSIDE, null, null, HelpMethods.GetSkeletonsRandomized(2, insideArr));
         outsideMap = new GameMap(outsideArr, Tiles.OUTSIDE, buildingArrayList, gameObjectArrayList, HelpMethods.GetSkeletonsRandomized(5, outsideArr));
 
-        HelpMethods.ConnectTwoDoorways(outsideMap, HelpMethods.CreateHitboxForDoorway(outsideMap, 0),
-                insideMap, HelpMethods.CreateHitboxForDoorway(3,6));
+        HelpMethods.ConnectTwoDoorways(outsideMap, HelpMethods.CreatePointForDoorway(outsideMap, 0),
+                insideMap, HelpMethods.CreatePointForDoorway(3,6));
 
         currentMap = outsideMap;
 
